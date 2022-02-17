@@ -1,0 +1,284 @@
+---
+title: "C01 Advanced RMARKDOWN"
+author: "Bryan Aviles - Lopez"
+date: '2022-02-16'
+slug: advanced-rmarkdown
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(datasets)
+data(iris)
+#load packages
+pkgs &lt;- c(&quot;rstatix&quot;, &quot;emmeans&quot;, &quot;psych&quot;, &quot;tidyr&quot;, &quot;tidyverse&quot;, 
+         &quot;psych&quot;, &quot;dplyr&quot;, &quot;ggplot2&quot;, &quot;lm.beta&quot;, &quot;car&quot;, 
+          &quot;Hmisc&quot;, &quot;skimr&quot;, &quot;janitor&quot;)
+lapply(pkgs, library, character.only = TRUE)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rstatix&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.5     v dplyr   1.0.7
+## v tibble  3.1.6     v stringr 1.4.0
+## v readr   2.1.2     v forcats 0.5.1
+## v purrr   0.3.4</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x ggplot2::%+%()   masks psych::%+%()
+## x ggplot2::alpha() masks psych::alpha()
+## x dplyr::filter()  masks rstatix::filter(), stats::filter()
+## x dplyr::lag()     masks stats::lag()</code></pre>
+<pre><code>## Loading required package: carData</code></pre>
+<pre><code>## 
+## Attaching package: &#39;car&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     recode</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     some</code></pre>
+<pre><code>## The following object is masked from &#39;package:psych&#39;:
+## 
+##     logit</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## Loading required package: survival</code></pre>
+<pre><code>## Loading required package: Formula</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Hmisc&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     src, summarize</code></pre>
+<pre><code>## The following object is masked from &#39;package:psych&#39;:
+## 
+##     describe</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     format.pval, units</code></pre>
+<pre><code>## 
+## Attaching package: &#39;janitor&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:rstatix&#39;:
+## 
+##     make_clean_names</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     chisq.test, fisher.test</code></pre>
+<pre><code>## [[1]]
+## [1] &quot;rstatix&quot;   &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot; &quot;utils&quot;     &quot;datasets&quot; 
+## [7] &quot;methods&quot;   &quot;base&quot;     
+## 
+## [[2]]
+## [1] &quot;emmeans&quot;   &quot;rstatix&quot;   &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot; &quot;utils&quot;    
+## [7] &quot;datasets&quot;  &quot;methods&quot;   &quot;base&quot;     
+## 
+## [[3]]
+##  [1] &quot;psych&quot;     &quot;emmeans&quot;   &quot;rstatix&quot;   &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot;
+##  [7] &quot;utils&quot;     &quot;datasets&quot;  &quot;methods&quot;   &quot;base&quot;     
+## 
+## [[4]]
+##  [1] &quot;tidyr&quot;     &quot;psych&quot;     &quot;emmeans&quot;   &quot;rstatix&quot;   &quot;stats&quot;     &quot;graphics&quot; 
+##  [7] &quot;grDevices&quot; &quot;utils&quot;     &quot;datasets&quot;  &quot;methods&quot;   &quot;base&quot;     
+## 
+## [[5]]
+##  [1] &quot;forcats&quot;   &quot;stringr&quot;   &quot;dplyr&quot;     &quot;purrr&quot;     &quot;readr&quot;     &quot;tibble&quot;   
+##  [7] &quot;ggplot2&quot;   &quot;tidyverse&quot; &quot;tidyr&quot;     &quot;psych&quot;     &quot;emmeans&quot;   &quot;rstatix&quot;  
+## [13] &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot; &quot;utils&quot;     &quot;datasets&quot;  &quot;methods&quot;  
+## [19] &quot;base&quot;     
+## 
+## [[6]]
+##  [1] &quot;forcats&quot;   &quot;stringr&quot;   &quot;dplyr&quot;     &quot;purrr&quot;     &quot;readr&quot;     &quot;tibble&quot;   
+##  [7] &quot;ggplot2&quot;   &quot;tidyverse&quot; &quot;tidyr&quot;     &quot;psych&quot;     &quot;emmeans&quot;   &quot;rstatix&quot;  
+## [13] &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot; &quot;utils&quot;     &quot;datasets&quot;  &quot;methods&quot;  
+## [19] &quot;base&quot;     
+## 
+## [[7]]
+##  [1] &quot;forcats&quot;   &quot;stringr&quot;   &quot;dplyr&quot;     &quot;purrr&quot;     &quot;readr&quot;     &quot;tibble&quot;   
+##  [7] &quot;ggplot2&quot;   &quot;tidyverse&quot; &quot;tidyr&quot;     &quot;psych&quot;     &quot;emmeans&quot;   &quot;rstatix&quot;  
+## [13] &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot; &quot;utils&quot;     &quot;datasets&quot;  &quot;methods&quot;  
+## [19] &quot;base&quot;     
+## 
+## [[8]]
+##  [1] &quot;forcats&quot;   &quot;stringr&quot;   &quot;dplyr&quot;     &quot;purrr&quot;     &quot;readr&quot;     &quot;tibble&quot;   
+##  [7] &quot;ggplot2&quot;   &quot;tidyverse&quot; &quot;tidyr&quot;     &quot;psych&quot;     &quot;emmeans&quot;   &quot;rstatix&quot;  
+## [13] &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot; &quot;utils&quot;     &quot;datasets&quot;  &quot;methods&quot;  
+## [19] &quot;base&quot;     
+## 
+## [[9]]
+##  [1] &quot;lm.beta&quot;   &quot;forcats&quot;   &quot;stringr&quot;   &quot;dplyr&quot;     &quot;purrr&quot;     &quot;readr&quot;    
+##  [7] &quot;tibble&quot;    &quot;ggplot2&quot;   &quot;tidyverse&quot; &quot;tidyr&quot;     &quot;psych&quot;     &quot;emmeans&quot;  
+## [13] &quot;rstatix&quot;   &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot; &quot;utils&quot;     &quot;datasets&quot; 
+## [19] &quot;methods&quot;   &quot;base&quot;     
+## 
+## [[10]]
+##  [1] &quot;car&quot;       &quot;carData&quot;   &quot;lm.beta&quot;   &quot;forcats&quot;   &quot;stringr&quot;   &quot;dplyr&quot;    
+##  [7] &quot;purrr&quot;     &quot;readr&quot;     &quot;tibble&quot;    &quot;ggplot2&quot;   &quot;tidyverse&quot; &quot;tidyr&quot;    
+## [13] &quot;psych&quot;     &quot;emmeans&quot;   &quot;rstatix&quot;   &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot;
+## [19] &quot;utils&quot;     &quot;datasets&quot;  &quot;methods&quot;   &quot;base&quot;     
+## 
+## [[11]]
+##  [1] &quot;Hmisc&quot;     &quot;Formula&quot;   &quot;survival&quot;  &quot;lattice&quot;   &quot;car&quot;       &quot;carData&quot;  
+##  [7] &quot;lm.beta&quot;   &quot;forcats&quot;   &quot;stringr&quot;   &quot;dplyr&quot;     &quot;purrr&quot;     &quot;readr&quot;    
+## [13] &quot;tibble&quot;    &quot;ggplot2&quot;   &quot;tidyverse&quot; &quot;tidyr&quot;     &quot;psych&quot;     &quot;emmeans&quot;  
+## [19] &quot;rstatix&quot;   &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot; &quot;utils&quot;     &quot;datasets&quot; 
+## [25] &quot;methods&quot;   &quot;base&quot;     
+## 
+## [[12]]
+##  [1] &quot;skimr&quot;     &quot;Hmisc&quot;     &quot;Formula&quot;   &quot;survival&quot;  &quot;lattice&quot;   &quot;car&quot;      
+##  [7] &quot;carData&quot;   &quot;lm.beta&quot;   &quot;forcats&quot;   &quot;stringr&quot;   &quot;dplyr&quot;     &quot;purrr&quot;    
+## [13] &quot;readr&quot;     &quot;tibble&quot;    &quot;ggplot2&quot;   &quot;tidyverse&quot; &quot;tidyr&quot;     &quot;psych&quot;    
+## [19] &quot;emmeans&quot;   &quot;rstatix&quot;   &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot; &quot;utils&quot;    
+## [25] &quot;datasets&quot;  &quot;methods&quot;   &quot;base&quot;     
+## 
+## [[13]]
+##  [1] &quot;janitor&quot;   &quot;skimr&quot;     &quot;Hmisc&quot;     &quot;Formula&quot;   &quot;survival&quot;  &quot;lattice&quot;  
+##  [7] &quot;car&quot;       &quot;carData&quot;   &quot;lm.beta&quot;   &quot;forcats&quot;   &quot;stringr&quot;   &quot;dplyr&quot;    
+## [13] &quot;purrr&quot;     &quot;readr&quot;     &quot;tibble&quot;    &quot;ggplot2&quot;   &quot;tidyverse&quot; &quot;tidyr&quot;    
+## [19] &quot;psych&quot;     &quot;emmeans&quot;   &quot;rstatix&quot;   &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot;
+## [25] &quot;utils&quot;     &quot;datasets&quot;  &quot;methods&quot;   &quot;base&quot;</code></pre>
+<pre class="r"><code>library(&quot;tidyverse&quot;)</code></pre>
+<div id="intro" class="section level1">
+<h1>Intro</h1>
+<div id="code-chunks" class="section level2">
+<h2>Code Chunks</h2>
+<ul>
+<li>Most common</li>
+<li>Use ` (backquote) not ’ (apostophe)</li>
+</ul>
+<pre class="r"><code>#Sum of 2 + 2
+2+2</code></pre>
+<pre><code>## [1] 4</code></pre>
+<pre class="r"><code>#Average Sepal Length
+mean(iris$Sepal.Length)</code></pre>
+<pre><code>## [1] 5.843333</code></pre>
+<ul>
+<li>When exporting you will see both of these outputs, but will only see the last one within rmd.<br />
+</li>
+<li>You can also click the x on the upper right corner of the output to remove the output.</li>
+</ul>
+<pre class="r"><code>#Levels of Species
+unique(iris$Species)</code></pre>
+<pre><code>## [1] setosa     versicolor virginica 
+## Levels: setosa versicolor virginica</code></pre>
+</div>
+<div id="inline-code" class="section level2">
+<h2>Inline Code</h2>
+<p>Two plus two equals 4.<br />
+The average Sepal Length is 5.8433333.<br />
+The three levels of Species are setosa, versicolor, virginica.</p>
+</div>
+</div>
+<div id="basics" class="section level1">
+<h1>Basics</h1>
+<div id="text" class="section level2">
+<h2>Text</h2>
+<p>Plain text<br />
+End a line with two spaces to start a new paragraph.<br />
+<em>italics</em> and <em>italics</em><br />
+<strong>bold</strong> and <strong>bold</strong><br />
+superscript<sup>2</sup><br />
+<del>strikethrough</del><br />
+<a href="www.rstudio.com">link</a></p>
+</div>
+<div id="headers-level-2" class="section level2">
+<h2>Headers (level 2)</h2>
+<pre class="r"><code>Make sure to leave a space between the # and your text  
+# Header 1
+## Header 2</code></pre>
+<div id="header-3" class="section level3">
+<h3>Header 3</h3>
+<div id="header-4" class="section level4">
+<h4>Header 4</h4>
+<div id="header-5" class="section level5">
+<h5>Header 5</h5>
+<div id="header-6" class="section level6">
+<h6>Header 6</h6>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="symbols" class="section level2">
+<h2>Symbols</h2>
+<p>endash: –<br />
+emdash: —<br />
+ellipsis: …<br />
+inline equation: <span class="math inline">\(A = \pi*r^{2}\)</span></p>
+<p>horizontal rule (or slide break):</p>
+<hr />
+</div>
+<div id="formatting" class="section level2">
+<h2>Formatting</h2>
+<blockquote>
+<p>block quote</p>
+</blockquote>
+<ul>
+<li>unordered list<br />
+</li>
+<li>item 2
+<ul>
+<li>sub-item 1 (one tab)</li>
+<li>sub-item 2 (one tab)</li>
+</ul></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>ordered list<br />
+</li>
+<li>item 2
+<ul>
+<li>sub-item 1 (two tabs)</li>
+<li>sub-item 2 (two tabs)</li>
+</ul></li>
+</ol>
+<table>
+<thead>
+<tr class="header">
+<th>First Header</th>
+<th>Second Header</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Table Cell 1</td>
+<td>Cell 2</td>
+</tr>
+<tr class="even">
+<td>Cell 3</td>
+<td>Cell 4</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="date" class="section level2">
+<h2>Date</h2>
+<pre class="r"><code>#Add this to date so that today&#39;s date is printed whenever doc is knitted
+title: &quot;Rmarkdown_Intro&quot;
+author: &quot;Ashley B-W&quot;
+date: &quot;`r Sys.Date()`&quot;</code></pre>
+<blockquote>
+<p>Most of this information was taken from this useful <a href="https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">cheatsheet</a></p>
+</blockquote>
+</div>
+</div>
+<div id="code-specifications" class="section level1">
+<h1>Code Specifications</h1>
+<div id="display-code" class="section level2">
+<h2>Display Code</h2>
+<pre><code>##   Sepal.Length    Sepal.Width     Petal.Length    Petal.Width   
+##  Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100  
+##  1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.600   1st Qu.:0.300  
+##  Median :5.800   Median :3.000   Median :4.350   Median :1.300  
+##  Mean   :5.843   Mean   :3.057   Mean   :3.758   Mean   :1.199  
+##  3rd Qu.:6.400   3rd Qu.:3.300   3rd Qu.:5.100   3rd Qu.:1.800  
+##  Max.   :7.900   Max.   :4.400   Max.   :6.900   Max.   :2.500  
+##        Species  
+##  setosa    :50  
+##  versicolor:50  
+##  virginica :50  
+##                 
+##                 
+## </code></pre>
+</div>
+</div>
